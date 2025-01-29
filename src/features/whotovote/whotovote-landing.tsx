@@ -18,71 +18,20 @@ import {
 import {
   Button,
 } from "@/components/ui/button";
-
-interface PartyData {
-  name: string;
-  color: string;
-  textColor: string;
-  positions: {
-    [key: string]: string;
-  };
-  fullPositions: {
-    [key: string]: string;
-  };
-}
+import { partyPositions, POSITION_CATEGORIES, type PartyPosition } from '@/data/party-positions';
 
 interface ComparisonInfographicProps {
   selectedParties: string[];
 }
 
-const PARTY_DATA: { [key: string]: PartyData } = {
-  CDU: {
-    name: "Christian Democratic Union (CDU)",
-    color: "#000000",
-    textColor: "#FFFFFF",
-    positions: {
-      "Migration": "Controlled immigration, strict asylum",
-      "Islam": "Integration with conditions",
-      "Tax": "Corporate & income tax cuts",
-      "Energy": "Mixed, including nuclear",
-      "Foreign": "Pro-NATO & EU",
-      "LGBTQ+": "Supports same-sex marriage"
-    },
-    fullPositions: {
-      "Migration/Immigration": "Advocates for controlled immigration, emphasizing skilled labor; supports stricter asylum policies and efficient deportation processes.",
-      "Islam": "Recognizes Islam as part of German society but calls for measures to ensure integration and adherence to constitutional values.",
-      "Tax Policy": "Proposes tax cuts, including capping corporate taxes at 25%, abolishing the solidarity levy, and reducing income tax.",
-      "Energy Policy": "Supports a balanced energy mix, including renewable energy and a potential return to nuclear power to ensure energy security and affordability.",
-      "Foreign Policy": "Strongly supports NATO and the EU; advocates for increased defense spending and a firm stance against Russian aggression.",
-      "Sex Education/LGBTQ+": "Supports comprehensive sex education; upholds LGBTQ+ rights, including same-sex marriage."
-    }
-  },
-  SPD: {
-    name: "Social Democratic Party (SPD)",
-    color: "#E3000F",
-    textColor: "#FFFFFF",
-    positions: {
-      "Migration": "Regulated, humanitarian focus",
-      "Islam": "Interfaith dialogue support",
-      "Tax": "Relief for low/middle income",
-      "Energy": "Phase out nuclear & coal",
-      "Foreign": "Diplomatic solutions",
-      "LGBTQ+": "Strong rights support"
-    },
-    fullPositions: {
-      "Migration/Immigration": "Supports regulated immigration with a focus on integration; opposes asylum procedures in third countries and emphasizes humanitarian responsibilities.",
-      "Islam": "Recognizes Islam as part of German society; promotes interfaith dialogue and anti-discrimination measures.",
-      "Tax Policy": "Focuses on tax relief for low and middle-income households; proposes reducing VAT on groceries and increasing taxes on higher incomes and inheritances.",
-      "Energy Policy": "Committed to phasing out coal and nuclear energy; invests in renewable energy and infrastructure to achieve climate goals.",
-      "Foreign Policy": "Proposes cautious foreign policy; supports diplomatic solutions and balanced relations, including with Russia and China",
-      "Sex Education/LGBTQ+": "Advocates for inclusive sex education; strongly supports LGBTQ+ rights and anti-discrimination laws."
-    }
-  },
-  // Add other parties with similar structure...
-};
+// Convert array to object for easier lookup
+const PARTY_DATA: { [key: string]: PartyPosition } = partyPositions.reduce((acc, party) => {
+  acc[party.name] = party;
+  return acc;
+}, {} as { [key: string]: PartyPosition });
 
 const ComparisonInfographic: React.FC<ComparisonInfographicProps> = ({ selectedParties }) => {
-  const topics = ["Migration", "Islam", "Tax", "Energy", "Foreign", "LGBTQ+"];
+  const topics = Object.values(POSITION_CATEGORIES);
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg">
@@ -111,7 +60,7 @@ const ComparisonInfographic: React.FC<ComparisonInfographicProps> = ({ selectedP
                     color: PARTY_DATA[partyKey].textColor
                   }}
                 >
-                  {PARTY_DATA[partyKey].name}
+                  {partyKey}
                 </th>
               ))}
             </tr>
@@ -152,11 +101,11 @@ const ComparisonInfographic: React.FC<ComparisonInfographicProps> = ({ selectedP
   );
 };
 
-const WhoToVote = () => {
+const WhoToVote: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [selectedParties, setSelectedParties] = useState<string[]>(['CDU']);
-  const [activeTab, setActiveTab] = useState('Migration/Immigration');
+  const [activeTab, setActiveTab] = useState<keyof typeof POSITION_CATEGORIES>(POSITION_CATEGORIES.MIGRATION);
   const [showInfographic, setShowInfographic] = useState(false);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,14 +124,17 @@ const WhoToVote = () => {
     setSelectedParties(selectedParties.filter(key => key !== partyKey));
   };
 
-  const filteredParties = Object.entries(PARTY_DATA).filter(([_, party]) =>
+  const filteredParties = Object.entries(PARTY_DATA).filter(([, party]) =>
     party.name.toLowerCase().includes(searchTerm) ||
-    Object.values(party.fullPositions).some(position =>
-      position.toLowerCase().includes(searchTerm)
+    Object.values(party.fullPositions).some(positions =>
+      positions.some(position => 
+        position.description.toLowerCase().includes(searchTerm) ||
+        position.title.toLowerCase().includes(searchTerm)
+      )
     )
   );
 
-  const topics = Object.keys(PARTY_DATA.CDU.fullPositions);
+  const topics = Object.values(POSITION_CATEGORIES);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -295,9 +247,12 @@ const WhoToVote = () => {
                             </div>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-sm text-gray-700">
-                              {PARTY_DATA[partyKey].fullPositions[activeTab]}
-                            </p>
+                            {PARTY_DATA[partyKey].fullPositions[activeTab]?.map((position, index) => (
+                              <div key={index} className="mb-4">
+                                <h3 className="font-medium mb-1">{position.title}</h3>
+                                <p className="text-sm text-gray-700">{position.description}</p>
+                              </div>
+                            ))}
                           </CardContent>
                         </Card>
                       ))}
@@ -359,9 +314,12 @@ const WhoToVote = () => {
                               <CardTitle>{topic}</CardTitle>
                             </CardHeader>
                             <CardContent>
-                              <p className="text-gray-700">
-                                {PARTY_DATA[selectedParties[0]].fullPositions[topic]}
-                              </p>
+                              {PARTY_DATA[selectedParties[0]].fullPositions[topic]?.map((position, index) => (
+                                <div key={index} className="mb-4">
+                                  <h3 className="font-medium mb-1">{position.title}</h3>
+                                  <p className="text-gray-700">{position.description}</p>
+                                </div>
+                              ))}
                             </CardContent>
                           </Card>
                         </TabsContent>
