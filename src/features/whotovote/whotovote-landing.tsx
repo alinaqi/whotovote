@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, X, Download } from 'lucide-react';
 import {
   Card,
@@ -6,12 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import {
   Toggle,
 } from "@/components/ui/toggle";
@@ -101,6 +95,70 @@ const ComparisonInfographic: React.FC<ComparisonInfographicProps> = ({ selectedP
   );
 };
 
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+const GermanFlag = () => (
+  <div className="flex h-6 overflow-hidden rounded">
+    <div className="w-4 bg-black"></div>
+    <div className="w-4 bg-[#DD0000]"></div>
+    <div className="w-4 bg-[#FFCE00]"></div>
+  </div>
+);
+
+const ElectionCountdown = () => {
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const electionDate = new Date('2025-02-23T00:00:00');
+      const difference = electionDate.getTime() - new Date().getTime();
+      
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60)
+        });
+      }
+    };
+
+    const timer = setInterval(calculateTimeLeft, 1000);
+    calculateTimeLeft();
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="text-center">
+      <div className="text-sm text-gray-600 mb-1">German Federal Election</div>
+      <div className="flex justify-center gap-4">
+        <div>
+          <span className="font-bold text-xl">{timeLeft.days}</span>
+          <span className="text-sm text-gray-600 ml-1">days</span>
+        </div>
+        <div>
+          <span className="font-bold text-xl">{timeLeft.hours}</span>
+          <span className="text-sm text-gray-600 ml-1">hrs</span>
+        </div>
+        <div>
+          <span className="font-bold text-xl">{timeLeft.minutes}</span>
+          <span className="text-sm text-gray-600 ml-1">min</span>
+        </div>
+        <div>
+          <span className="font-bold text-xl">{timeLeft.seconds}</span>
+          <span className="text-sm text-gray-600 ml-1">sec</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const WhoToVote: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompareMode, setIsCompareMode] = useState(false);
@@ -136,15 +194,33 @@ const WhoToVote: React.FC = () => {
 
   const topics = Object.values(POSITION_CATEGORIES);
 
+  const resetToMain = () => {
+    setSelectedParties(['CDU']);
+    setIsCompareMode(false);
+    setShowInfographic(false);
+    setActiveTab(POSITION_CATEGORIES.MIGRATION);
+    setSearchTerm('');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">WhoToVote</h1>
-              <p className="mt-2 text-gray-600">Your Guide to German Political Parties</p>
+            <div 
+              className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={resetToMain}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && resetToMain()}
+            >
+              <GermanFlag />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">WhoToVote</h1>
+                <p className="mt-2 text-gray-600">Your Guide to German Political Parties</p>
+              </div>
             </div>
+            <ElectionCountdown />
             <Toggle
               pressed={isCompareMode}
               onPressedChange={setIsCompareMode}
@@ -224,45 +300,45 @@ const WhoToVote: React.FC = () => {
                   <ComparisonInfographic selectedParties={selectedParties} />
                 ) : (
                   <>
-                    <Tabs 
-                      value={activeTab} 
-                      onValueChange={(value: string) => setActiveTab(value as PositionCategory)}
-                    >
-                      <TabsList className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                        {topics.map(topic => (
-                          <TabsTrigger 
-                            key={topic} 
-                            value={topic} 
-                            className="text-sm"
-                          >
-                            {topic}
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-                    </Tabs>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-                      {selectedParties.map(partyKey => (
-                        <Card key={partyKey}>
-                          <CardHeader>
-                            <div className="flex items-center space-x-2">
-                              <div
-                                className="w-4 h-4 rounded-full"
-                                style={{ backgroundColor: PARTY_DATA[partyKey].color }}
-                              />
-                              <CardTitle className="text-sm">{PARTY_DATA[partyKey].name}</CardTitle>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            {PARTY_DATA[partyKey].fullPositions[activeTab]?.map((position, index) => (
-                              <div key={index} className="mb-4">
-                                <h3 className="font-medium mb-1">{position.title}</h3>
-                                <p className="text-sm text-gray-700">{position.description}</p>
-                              </div>
-                            ))}
-                          </CardContent>
-                        </Card>
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sticky top-0 z-10 bg-white pb-4">
+                      {topics.map(topic => (
+                        <Button
+                          key={topic}
+                          variant="outline"
+                          className={`px-4 py-3 text-sm font-medium ${
+                            activeTab === topic ? 'bg-gray-100' : ''
+                          }`}
+                          onClick={() => setActiveTab(topic)}
+                        >
+                          {topic}
+                        </Button>
                       ))}
+                    </div>
+
+                    <div className="bg-white rounded-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+                        {selectedParties.map(partyKey => (
+                          <Card key={partyKey}>
+                            <CardHeader>
+                              <div className="flex items-center space-x-2">
+                                <div
+                                  className="w-4 h-4 rounded-full"
+                                  style={{ backgroundColor: PARTY_DATA[partyKey].color }}
+                                />
+                                <CardTitle className="text-sm">{PARTY_DATA[partyKey].name}</CardTitle>
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              {PARTY_DATA[partyKey].fullPositions[activeTab]?.map((position, index) => (
+                                <div key={index} className="mb-4">
+                                  <h3 className="font-medium mb-1">{position.title}</h3>
+                                  <p className="text-sm text-gray-700">{position.description}</p>
+                                </div>
+                              ))}
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
                     </div>
                   </>
                 )}
@@ -275,7 +351,7 @@ const WhoToVote: React.FC = () => {
               {filteredParties.map(([key, party]) => (
                 <Card
                   key={key}
-                  className={`cursor-pointer transition-shadow hover:shadow-lg ${
+                  className={`cursor-pointer transition-shadow hover:shadow-lg border-0 ${
                     selectedParties[0] === key ? 'ring-2 ring-blue-500' : ''
                   }`}
                   onClick={() => setSelectedParties([key])}
@@ -295,45 +371,47 @@ const WhoToVote: React.FC = () => {
 
             <div className="md:col-span-2">
               {selectedParties[0] && (
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className="w-8 h-8 rounded-full"
-                        style={{ backgroundColor: PARTY_DATA[selectedParties[0]].color }}
-                      />
-                      <CardTitle>{PARTY_DATA[selectedParties[0]].name}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Tabs defaultValue={topics[0]}>
-                      <TabsList className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                        {topics.map(topic => (
-                          <TabsTrigger key={topic} value={topic} className="text-sm">
-                            {topic}
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
+                <div className="space-y-6">
+                  <Card className="border-0">
+                    <CardHeader>
+                      <div className="flex items-center space-x-2">
+                        <div
+                          className="w-8 h-8 rounded-full"
+                          style={{ backgroundColor: PARTY_DATA[selectedParties[0]].color }}
+                        />
+                        <CardTitle>{PARTY_DATA[selectedParties[0]].name}</CardTitle>
+                      </div>
+                    </CardHeader>
+                  </Card>
+
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sticky top-0 z-10 bg-white pb-4">
                       {topics.map(topic => (
-                        <TabsContent key={topic} value={topic}>
-                          <Card>
-                            <CardHeader>
-                              <CardTitle>{topic}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              {PARTY_DATA[selectedParties[0]].fullPositions[topic]?.map((position, index) => (
-                                <div key={index} className="mb-4">
-                                  <h3 className="font-medium mb-1">{position.title}</h3>
-                                  <p className="text-gray-700">{position.description}</p>
-                                </div>
-                              ))}
-                            </CardContent>
-                          </Card>
-                        </TabsContent>
+                        <Button
+                          key={topic}
+                          variant="outline"
+                          className={`px-4 py-3 text-sm font-medium ${
+                            activeTab === topic ? 'bg-gray-100' : ''
+                          }`}
+                          onClick={() => setActiveTab(topic)}
+                        >
+                          {topic}
+                        </Button>
                       ))}
-                    </Tabs>
-                  </CardContent>
-                </Card>
+                    </div>
+
+                    <div className="bg-white rounded-lg">
+                      <div className="space-y-4 p-6">
+                        {PARTY_DATA[selectedParties[0]].fullPositions[activeTab]?.map((position, index) => (
+                          <div key={index} className="mb-4">
+                            <h3 className="font-medium mb-1">{position.title}</h3>
+                            <p className="text-gray-700">{position.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>
