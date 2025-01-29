@@ -18,13 +18,11 @@ import {
 import {
   Button,
 } from "@/components/ui/button";
-import { partyPositions, POSITION_CATEGORIES, type PartyPosition } from '@/data/party-positions';
+import { partyPositions, POSITION_CATEGORIES, type PartyPosition, type PositionCategory } from '@/data/party-positions';
 
 interface ComparisonInfographicProps {
   selectedParties: string[];
 }
-
-type PositionCategory = typeof POSITION_CATEGORIES[keyof typeof POSITION_CATEGORIES];
 
 // Convert array to object for easier lookup
 const PARTY_DATA: { [key: string]: PartyPosition } = partyPositions.reduce((acc, party) => {
@@ -226,10 +224,17 @@ const WhoToVote: React.FC = () => {
                   <ComparisonInfographic selectedParties={selectedParties} />
                 ) : (
                   <>
-                    <Tabs value={activeTab} onValueChange={(value: PositionCategory) => setActiveTab(value)}>
+                    <Tabs 
+                      value={activeTab} 
+                      onValueChange={(value: string) => setActiveTab(value as PositionCategory)}
+                    >
                       <TabsList className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                         {topics.map(topic => (
-                          <TabsTrigger key={topic} value={topic} className="text-sm">
+                          <TabsTrigger 
+                            key={topic} 
+                            value={topic} 
+                            className="text-sm"
+                          >
                             {topic}
                           </TabsTrigger>
                         ))}

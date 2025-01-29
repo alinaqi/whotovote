@@ -22,6 +22,8 @@ export const POSITION_CATEGORIES = {
   SEX_ED: 'Sex Education/LGBTQ+'
 } as const;
 
+export type PositionCategory = typeof POSITION_CATEGORIES[keyof typeof POSITION_CATEGORIES];
+
 export const partyPositions: PartyPosition[] = [
   {
     name: 'CDU',
