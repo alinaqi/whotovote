@@ -24,6 +24,8 @@ interface ComparisonInfographicProps {
   selectedParties: string[];
 }
 
+type PositionCategory = typeof POSITION_CATEGORIES[keyof typeof POSITION_CATEGORIES];
+
 // Convert array to object for easier lookup
 const PARTY_DATA: { [key: string]: PartyPosition } = partyPositions.reduce((acc, party) => {
   acc[party.name] = party;
@@ -105,7 +107,7 @@ const WhoToVote: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [selectedParties, setSelectedParties] = useState<string[]>(['CDU']);
-  const [activeTab, setActiveTab] = useState<keyof typeof POSITION_CATEGORIES>(POSITION_CATEGORIES.MIGRATION);
+  const [activeTab, setActiveTab] = useState<PositionCategory>(POSITION_CATEGORIES.MIGRATION);
   const [showInfographic, setShowInfographic] = useState(false);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,7 +226,7 @@ const WhoToVote: React.FC = () => {
                   <ComparisonInfographic selectedParties={selectedParties} />
                 ) : (
                   <>
-                    <Tabs value={activeTab} onValueChange={setActiveTab}>
+                    <Tabs value={activeTab} onValueChange={(value: PositionCategory) => setActiveTab(value)}>
                       <TabsList className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                         {topics.map(topic => (
                           <TabsTrigger key={topic} value={topic} className="text-sm">
