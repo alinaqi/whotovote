@@ -232,8 +232,8 @@ const WhoToVote: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-2 md:px-4 py-4 md:py-6">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <div 
               className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
               onClick={resetToMain}
@@ -243,15 +243,15 @@ const WhoToVote: React.FC = () => {
             >
               <GermanFlag />
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">WhoToVote</h1>
-                <p className="mt-2 text-gray-600">Your Guide to German Political Parties</p>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">WhoToVote</h1>
+                <p className="mt-1 md:mt-2 text-sm md:text-base text-gray-600">Your Guide to German Political Parties</p>
               </div>
             </div>
             <ElectionCountdown />
             <Toggle
               pressed={isCompareMode}
               onPressedChange={setIsCompareMode}
-              className="px-4"
+              className="w-full md:w-auto px-4"
             >
               Compare Mode
             </Toggle>
@@ -259,7 +259,7 @@ const WhoToVote: React.FC = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="w-full max-w-7xl mx-auto px-2 md:px-4 py-4 md:py-8">
         <div className="relative mb-8">
           <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <input
@@ -271,8 +271,8 @@ const WhoToVote: React.FC = () => {
         </div>
 
         {isCompareMode ? (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="space-y-4 md:space-y-6 w-full overflow-x-hidden">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
               {filteredParties.map(([key, party]) => (
                 <Card
                   key={key}
@@ -281,33 +281,33 @@ const WhoToVote: React.FC = () => {
                   }`}
                   onClick={() => togglePartySelection(key)}
                 >
-                  <CardHeader className="p-4 md:p-6">
+                  <CardHeader className="p-2 md:p-4">
                     <div className="flex items-center space-x-2">
                       <div
-                        className="w-4 md:w-6 h-4 md:h-6 rounded-full"
+                        className="w-4 md:w-6 h-4 md:h-6 rounded-full flex-shrink-0"
                         style={{ backgroundColor: party.color }}
                       />
-                      <CardTitle className="text-xs md:text-sm">{party.name}</CardTitle>
+                      <CardTitle className="text-xs md:text-sm truncate">{party.name}</CardTitle>
                     </div>
                   </CardHeader>
                 </Card>
               ))}
             </div>
 
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-4">
-                <div className="flex flex-wrap gap-2 md:gap-4 mb-4">
+            <div className="bg-white rounded-lg shadow w-full">
+              <div className="p-2 md:p-4 overflow-x-auto">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {selectedParties.map(partyKey => (
-                    <div key={partyKey} className="flex items-center space-x-2 bg-gray-100 px-2 md:px-3 py-1 rounded-full">
+                    <div key={partyKey} className="flex items-center space-x-1 md:space-x-2 bg-gray-100 px-2 py-1 rounded-full">
                       <div
-                        className="w-3 md:w-4 h-3 md:h-4 rounded-full"
+                        className="w-3 md:w-4 h-3 md:h-4 rounded-full flex-shrink-0"
                         style={{ backgroundColor: PARTY_DATA[partyKey].color }}
                       />
                       <span className="text-xs md:text-sm font-medium">{PARTY_DATA[partyKey].name}</span>
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="p-0 h-4 w-4"
+                        className="p-0 h-4 w-4 flex-shrink-0"
                         onClick={() => removeParty(partyKey)}
                       >
                         <X className="h-3 w-3" />
@@ -324,15 +324,19 @@ const WhoToVote: React.FC = () => {
                 </Button>
 
                 {showInfographic ? (
-                  <ComparisonInfographic selectedParties={selectedParties} />
+                  <div className="w-full overflow-x-auto">
+                    <div className="min-w-[640px] md:min-w-0">
+                      <ComparisonInfographic selectedParties={selectedParties} />
+                    </div>
+                  </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sticky top-0 z-10 bg-white pb-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 sticky top-0 z-10 bg-white pb-4 overflow-x-auto">
                       {topics.map(topic => (
                         <Button
                           key={topic}
                           variant="outline"
-                          className={`px-4 py-3 text-sm font-medium ${
+                          className={`px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm font-medium whitespace-nowrap ${
                             activeTab === topic ? 'bg-gray-100' : ''
                           }`}
                           onClick={() => setActiveTab(topic)}
@@ -342,29 +346,31 @@ const WhoToVote: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="bg-white rounded-lg">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
-                        {selectedParties.map(partyKey => (
-                          <Card key={partyKey}>
-                            <CardHeader>
-                              <div className="flex items-center space-x-2">
-                                <div
-                                  className="w-4 h-4 rounded-full"
-                                  style={{ backgroundColor: PARTY_DATA[partyKey].color }}
-                                />
-                                <CardTitle className="text-sm">{PARTY_DATA[partyKey].name}</CardTitle>
-                              </div>
-                            </CardHeader>
-                            <CardContent>
-                              {PARTY_DATA[partyKey].fullPositions[activeTab]?.map((position, index) => (
-                                <div key={index} className="mb-4">
-                                  <h3 className="font-medium mb-1">{position.title}</h3>
-                                  <p className="text-sm text-gray-700">{position.description}</p>
+                    <div className="w-full overflow-x-auto">
+                      <div className="min-w-[300px]">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2 md:p-6">
+                          {selectedParties.map(partyKey => (
+                            <Card key={partyKey} className="w-full">
+                              <CardHeader className="p-3 md:p-6">
+                                <div className="flex items-center space-x-2">
+                                  <div
+                                    className="w-4 h-4 rounded-full flex-shrink-0"
+                                    style={{ backgroundColor: PARTY_DATA[partyKey].color }}
+                                  />
+                                  <CardTitle className="text-sm truncate">{PARTY_DATA[partyKey].name}</CardTitle>
                                 </div>
-                              ))}
-                            </CardContent>
-                          </Card>
-                        ))}
+                              </CardHeader>
+                              <CardContent className="p-3 md:p-6">
+                                {PARTY_DATA[partyKey].fullPositions[activeTab]?.map((position, index) => (
+                                  <div key={index} className="mb-4">
+                                    <h3 className="font-medium mb-1 text-sm md:text-base">{position.title}</h3>
+                                    <p className="text-xs md:text-sm text-gray-700">{position.description}</p>
+                                  </div>
+                                ))}
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </>
@@ -373,7 +379,7 @@ const WhoToVote: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="md:col-span-1 space-y-4">
               {filteredParties.map(([key, party]) => (
                 <Card
