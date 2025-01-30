@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Download } from 'lucide-react';
 import {
   Card,
@@ -13,6 +13,7 @@ import {
   Button,
 } from "@/components/ui/button";
 import { partyPositions, POSITION_CATEGORIES, type PartyPosition, type PositionCategory } from '@/data/party-positions';
+import html2canvas from 'html2canvas';
 
 interface ComparisonInfographicProps {
   selectedParties: string[];
@@ -26,15 +27,39 @@ const PARTY_DATA: { [key: string]: PartyPosition } = partyPositions.reduce((acc,
 
 const ComparisonInfographic: React.FC<ComparisonInfographicProps> = ({ selectedParties }) => {
   const topics = Object.values(POSITION_CATEGORIES);
+  const infographicRef = useRef<HTMLDivElement>(null);
+
+  const exportToPng = async () => {
+    if (!infographicRef.current) return;
+
+    try {
+      const canvas = await html2canvas(infographicRef.current, {
+        scale: 2, // Higher quality
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+
+      // Create download link
+      const link = document.createElement('a');
+      link.download = `whotovote-comparison-${selectedParties.join('-')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (error) {
+      console.error('Error exporting image:', error);
+    }
+  };
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg">
+    <div ref={infographicRef} className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg">
       <div className="mb-6 flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">German Political Parties</h2>
           <p className="text-gray-600">Key Policy Positions Comparison</p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button 
+          className="flex items-center gap-2"
+          onClick={exportToPng}
+        >
           <Download className="h-4 w-4" />
           Save Image
         </Button>
