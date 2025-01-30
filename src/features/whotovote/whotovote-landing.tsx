@@ -50,14 +50,14 @@ const ComparisonInfographic: React.FC<ComparisonInfographicProps> = ({ selectedP
   };
 
   return (
-    <div ref={infographicRef} className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-lg">
-      <div className="mb-6 flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">German Political Parties</h2>
+    <div ref={infographicRef} className="w-full mx-auto p-4 md:p-8 bg-white rounded-lg shadow-lg">
+      <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="text-center md:text-left">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">German Political Parties</h2>
           <p className="text-gray-600">Key Policy Positions Comparison</p>
         </div>
         <Button 
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full md:w-auto"
           onClick={exportToPng}
         >
           <Download className="h-4 w-4" />
@@ -65,51 +65,53 @@ const ComparisonInfographic: React.FC<ComparisonInfographicProps> = ({ selectedP
         </Button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="p-3 bg-gray-100 border text-left">Policy Area</th>
-              {selectedParties.map(partyKey => (
-                <th
-                  key={partyKey}
-                  className="p-3 border text-left"
-                  style={{
-                    backgroundColor: PARTY_DATA[partyKey].color,
-                    color: PARTY_DATA[partyKey].textColor
-                  }}
-                >
-                  {partyKey}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {topics.map(topic => (
-              <tr key={topic} className="hover:bg-gray-50">
-                <td className="p-3 border font-medium bg-gray-100">
-                  {topic}
-                </td>
+      <div className="overflow-x-auto -mx-4 md:mx-0">
+        <div className="min-w-[640px] md:min-w-0 p-4 md:p-0">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                <th className="p-3 bg-gray-100 border text-left whitespace-nowrap">Policy Area</th>
                 {selectedParties.map(partyKey => (
-                  <td
-                    key={`${partyKey}-${topic}`}
-                    className="p-3 border"
+                  <th
+                    key={partyKey}
+                    className="p-3 border text-left whitespace-nowrap"
+                    style={{
+                      backgroundColor: PARTY_DATA[partyKey].color,
+                      color: PARTY_DATA[partyKey].textColor
+                    }}
                   >
-                    <div className="relative">
-                      <div 
-                        className="absolute left-0 top-0 bottom-0 w-1"
-                        style={{ backgroundColor: PARTY_DATA[partyKey].color }}
-                      />
-                      <div className="pl-3">
-                        {PARTY_DATA[partyKey].positions[topic]}
-                      </div>
-                    </div>
-                  </td>
+                    {partyKey}
+                  </th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {topics.map(topic => (
+                <tr key={topic} className="hover:bg-gray-50">
+                  <td className="p-3 border font-medium bg-gray-100 whitespace-nowrap">
+                    {topic}
+                  </td>
+                  {selectedParties.map(partyKey => (
+                    <td
+                      key={`${partyKey}-${topic}`}
+                      className="p-3 border"
+                    >
+                      <div className="relative">
+                        <div 
+                          className="absolute left-0 top-0 bottom-0 w-1"
+                          style={{ backgroundColor: PARTY_DATA[partyKey].color }}
+                        />
+                        <div className="pl-3 break-words">
+                          {PARTY_DATA[partyKey].positions[topic]}
+                        </div>
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       
       <div className="mt-6 text-center text-gray-500 text-sm">
@@ -270,7 +272,7 @@ const WhoToVote: React.FC = () => {
 
         {isCompareMode ? (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {filteredParties.map(([key, party]) => (
                 <Card
                   key={key}
@@ -279,13 +281,13 @@ const WhoToVote: React.FC = () => {
                   }`}
                   onClick={() => togglePartySelection(key)}
                 >
-                  <CardHeader>
+                  <CardHeader className="p-4 md:p-6">
                     <div className="flex items-center space-x-2">
                       <div
-                        className="w-6 h-6 rounded-full"
+                        className="w-4 md:w-6 h-4 md:h-6 rounded-full"
                         style={{ backgroundColor: party.color }}
                       />
-                      <CardTitle className="text-sm">{party.name}</CardTitle>
+                      <CardTitle className="text-xs md:text-sm">{party.name}</CardTitle>
                     </div>
                   </CardHeader>
                 </Card>
@@ -293,15 +295,15 @@ const WhoToVote: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow">
-              <div className="p-4 border-b">
-                <div className="flex flex-wrap gap-4 mb-4">
+              <div className="p-4">
+                <div className="flex flex-wrap gap-2 md:gap-4 mb-4">
                   {selectedParties.map(partyKey => (
-                    <div key={partyKey} className="flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded-full">
+                    <div key={partyKey} className="flex items-center space-x-2 bg-gray-100 px-2 md:px-3 py-1 rounded-full">
                       <div
-                        className="w-4 h-4 rounded-full"
+                        className="w-3 md:w-4 h-3 md:h-4 rounded-full"
                         style={{ backgroundColor: PARTY_DATA[partyKey].color }}
                       />
-                      <span className="text-sm font-medium">{PARTY_DATA[partyKey].name}</span>
+                      <span className="text-xs md:text-sm font-medium">{PARTY_DATA[partyKey].name}</span>
                       <Button
                         variant="ghost"
                         size="sm"
@@ -315,7 +317,7 @@ const WhoToVote: React.FC = () => {
                 </div>
 
                 <Button 
-                  className="mb-4"
+                  className="w-full md:w-auto mb-4"
                   onClick={() => setShowInfographic(!showInfographic)}
                 >
                   {showInfographic ? 'Hide' : 'Show'} Shareable Infographic
