@@ -442,6 +442,13 @@ const WhoToVote: React.FC = () => {
           </div>
         )}
       </main>
+      <footer className="bg-white border-t mt-auto">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="text-center text-sm text-gray-600">
+            © {new Date().getFullYear()} LeanAI Ventures LLC. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
