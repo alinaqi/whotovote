@@ -2,6 +2,7 @@ export interface PartyPosition {
   name: string;
   color: string;
   textColor: string;
+  manifestoPdf: string;
   positions: {
     [key: string]: string;
   };
@@ -29,6 +30,7 @@ export const partyPositions: PartyPosition[] = [
     name: 'CDU',
     color: '#000000',
     textColor: '#ffffff',
+    manifestoPdf: '/cdu.pdf',
     positions: {
       [POSITION_CATEGORIES.MIGRATION]: 'Controlled immigration focusing on skilled labor',
       [POSITION_CATEGORIES.ISLAM]: 'Recognizes Islam with integration focus',
@@ -80,6 +82,7 @@ export const partyPositions: PartyPosition[] = [
     name: 'SPD',
     color: '#E3000F',
     textColor: '#ffffff',
+    manifestoPdf: '/spd.pdf',
     positions: {
       [POSITION_CATEGORIES.MIGRATION]: 'Regulated immigration with integration focus',
       [POSITION_CATEGORIES.ISLAM]: 'Promotes interfaith dialogue',
@@ -131,6 +134,7 @@ export const partyPositions: PartyPosition[] = [
     name: 'Greens',
     color: '#46962b',
     textColor: '#ffffff',
+    manifestoPdf: '/greens.pdf',
     positions: {
       [POSITION_CATEGORIES.MIGRATION]: 'Open immigration with human rights focus',
       [POSITION_CATEGORIES.ISLAM]: 'Supports multicultural society',
@@ -182,6 +186,7 @@ export const partyPositions: PartyPosition[] = [
     name: 'FDP',
     color: '#ffed00',
     textColor: '#000000',
+    manifestoPdf: '/fdp.pdf',
     positions: {
       [POSITION_CATEGORIES.MIGRATION]: 'Points-based immigration system',
       [POSITION_CATEGORIES.ISLAM]: 'Emphasizes individual rights',
@@ -233,6 +238,7 @@ export const partyPositions: PartyPosition[] = [
     name: 'Die Linke',
     color: '#BE3075',
     textColor: '#ffffff',
+    manifestoPdf: '/dielinke.pdf',
     positions: {
       [POSITION_CATEGORIES.MIGRATION]: 'Open borders policy',
       [POSITION_CATEGORIES.ISLAM]: 'Promotes secular diversity',
@@ -284,6 +290,7 @@ export const partyPositions: PartyPosition[] = [
     name: 'AfD',
     color: '#009EE0',
     textColor: '#ffffff',
+    manifestoPdf: '/afd.pdf',
     positions: {
       [POSITION_CATEGORIES.MIGRATION]: 'Net-zero immigration policy',
       [POSITION_CATEGORIES.ISLAM]: 'Opposes Islamic practices',
@@ -327,6 +334,58 @@ export const partyPositions: PartyPosition[] = [
         {
           title: 'Social Policy',
           description: 'Opposes early sexual education and gender mainstreaming; does not support same-sex marriage, favoring civil unions instead.'
+        }
+      ]
+    }
+  },
+  {
+    name: 'BSW',
+    color: '#9B2242',
+    textColor: '#ffffff',
+    manifestoPdf: '/bsw.pdf',
+    positions: {
+      [POSITION_CATEGORIES.MIGRATION]: 'Strict immigration control with social focus',
+      [POSITION_CATEGORIES.ISLAM]: 'Secular state emphasis',
+      [POSITION_CATEGORIES.TAX]: 'Higher taxes on wealthy, support for lower income',
+      [POSITION_CATEGORIES.ENERGY]: 'Affordable energy focus',
+      [POSITION_CATEGORIES.FOREIGN]: 'Peace-oriented diplomacy',
+      [POSITION_CATEGORIES.SEX_ED]: 'Traditional values with tolerance'
+    },
+    fullPositions: {
+      [POSITION_CATEGORIES.MIGRATION]: [
+        {
+          title: 'Immigration Policy',
+          description: 'Advocates for stricter immigration controls while maintaining humanitarian obligations; supports limiting economic migration and focusing on genuine asylum seekers.'
+        }
+      ],
+      [POSITION_CATEGORIES.ISLAM]: [
+        {
+          title: 'Religious Integration',
+          description: 'Emphasizes secular state principles while respecting religious freedoms; supports integration requirements and opposes religious extremism.'
+        }
+      ],
+      [POSITION_CATEGORIES.TAX]: [
+        {
+          title: 'Tax Reform',
+          description: 'Supports higher taxation of wealthy individuals and large corporations; advocates for social welfare programs and protection of lower-income groups.'
+        }
+      ],
+      [POSITION_CATEGORIES.ENERGY]: [
+        {
+          title: 'Energy Strategy',
+          description: 'Prioritizes affordable energy access; supports pragmatic energy policy including temporary use of conventional sources while transitioning to renewables.'
+        }
+      ],
+      [POSITION_CATEGORIES.FOREIGN]: [
+        {
+          title: 'International Relations',
+          description: 'Advocates for peace-oriented diplomacy; supports de-escalation with Russia, critical of NATO expansion, and emphasizes German economic interests.'
+        }
+      ],
+      [POSITION_CATEGORIES.SEX_ED]: [
+        {
+          title: 'Social Policy',
+          description: 'Balances traditional values with tolerance; supports basic rights while being critical of what they term "excessive identity politics".'
         }
       ]
     }

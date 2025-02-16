@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Download } from 'lucide-react';
+import { Search, X, Download, ArrowRight } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -186,6 +186,46 @@ const ElectionCountdown = () => {
   );
 };
 
+const ChatPrompt = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    // Try different possible chat element selectors
+    const chatElement = 
+      document.querySelector('#chat-widget') || 
+      document.querySelector('.chat-widget') ||
+      document.querySelector('[role="complementary"]');
+    
+    const handleChatClick = () => {
+      setIsVisible(false);
+    };
+
+    if (chatElement) {
+      chatElement.addEventListener('click', handleChatClick);
+      return () => chatElement.removeEventListener('click', handleChatClick);
+    }
+  }, []);
+
+  if (!isVisible) return null;
+
+  return (
+    <div 
+      className="fixed bottom-12 right-24 flex items-center gap-4 z-50 animate-bounce cursor-pointer"
+      onClick={() => setIsVisible(false)}
+    >
+      <div className="relative bg-white p-3 rounded-lg shadow-lg text-sm group transition-transform hover:scale-105">
+        <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200" />
+        <div className="relative bg-white p-3 rounded-lg ring-1 ring-gray-200">
+          Ask any questions about German politics!
+        </div>
+      </div>
+      <div className="animate-pulse hover:scale-110 transition-transform">
+        <ArrowRight className="h-6 w-6 text-blue-500" />
+      </div>
+    </div>
+  );
+};
+
 const WhoToVote: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCompareMode, setIsCompareMode] = useState(false);
@@ -282,12 +322,24 @@ const WhoToVote: React.FC = () => {
                   onClick={() => togglePartySelection(key)}
                 >
                   <CardHeader className="p-2 md:p-4">
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className="w-4 md:w-6 h-4 md:h-6 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: party.color }}
-                      />
-                      <CardTitle className="text-xs md:text-sm truncate">{party.name}</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div
+                          className="w-4 md:w-6 h-4 md:h-6 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: party.color }}
+                        />
+                        <CardTitle className="text-xs md:text-sm truncate">{party.name}</CardTitle>
+                      </div>
+                      <a
+                        href={party.manifestoPdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-gray-500 hover:text-gray-700"
+                        title="Download Manifesto"
+                      >
+                        <Download className="h-4 w-4" />
+                      </a>
                     </div>
                   </CardHeader>
                 </Card>
@@ -390,12 +442,24 @@ const WhoToVote: React.FC = () => {
                   onClick={() => setSelectedParties([key])}
                 >
                   <CardHeader>
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className="w-6 h-6 rounded-full"
-                        style={{ backgroundColor: party.color }}
-                      />
-                      <CardTitle className="text-lg">{party.name}</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <div
+                          className="w-6 h-6 rounded-full"
+                          style={{ backgroundColor: party.color }}
+                        />
+                        <CardTitle className="text-lg">{party.name}</CardTitle>
+                      </div>
+                      <a
+                        href={party.manifestoPdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-gray-500 hover:text-gray-700"
+                        title="Download Manifesto"
+                      >
+                        <Download className="h-5 w-5" />
+                      </a>
                     </div>
                   </CardHeader>
                 </Card>
@@ -450,6 +514,7 @@ const WhoToVote: React.FC = () => {
           </div>
         )}
       </main>
+      <ChatPrompt />
       <footer className="bg-white border-t mt-auto">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="text-center text-sm text-gray-600">
